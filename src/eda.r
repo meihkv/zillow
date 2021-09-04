@@ -38,10 +38,3 @@ relative_change = (inventory_pivot/lag(inventory_pivot)-1) %>%
   pivot_longer(col = -Year,names_to = 'StateName', values_to = 'Inventory') %>% 
   mutate(Year = as.Date(Year),
          Inventory = round(Inventory, 2))
-
-result=ggplot(relative_change) + 
-  geom_line(aes(x = Year, y = Inventory, color = StateName)) +
-  scale_y_continuous(labels = scales::percent)+
-  theme_minimal()
-
-ggplotly(result)

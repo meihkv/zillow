@@ -1,0 +1,42 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE,}
+# rmarkdown::render(input = 'flexdashboard.Rmd', output_format = 'all',output_dir = './doc', output_file = 'index.html')
+library(flexdashboard)
+source('./src/eda.r')
+result=ggplot(relative_change) + 
+  geom_line(aes(x = Year, y = Inventory, color = StateName)) +
+  scale_y_continuous(labels = scales::percent) +
+  theme_minimal()
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+ggplotly(result)
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+ggplotly(result)
+```
+
+### Chart C
+
+```{r}
+ggplotly(result)
+```
+
