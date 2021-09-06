@@ -20,7 +20,7 @@ Column {data-width=600}
 
 ```{r}
 library(leaflet)
-library(map)
+library(maps)
 mapStates = map("state", fill = TRUE, plot = FALSE)
 
 leaflet(data = mapStates) %>% addTiles() %>%
