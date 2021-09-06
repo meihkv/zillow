@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Scarcity and demand continues in 2021's housing market"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -30,7 +30,7 @@ leaflet(data = mapStates) %>% addTiles() %>%
 Column {data-width=350}
 -----------------------------------------------------------------------
 
-### Chart B
+### 
 
 ```{r}
 inventory_result = ggplot(zillow %>% filter(StateName == "US")) + 
@@ -46,7 +46,7 @@ inventory_result = ggplot(zillow %>% filter(StateName == "US")) +
 ggplotly(inventory_result)
 ```
 
-### Chart C
+### 
 
 ```{r}
 sales_result = ggplot(zillow %>% filter(StateName == "US")) + 
