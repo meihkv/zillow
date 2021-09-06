@@ -4,25 +4,27 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    source_code: embed
 ---
 
 ```{r setup, include=FALSE,}
 # rmarkdown::render(input = 'flexdashboard.Rmd', output_format = 'all',output_dir = './doc', output_file = 'index.html')
 library(flexdashboard)
 source('./src/eda.r')
-result=ggplot(relative_change) + 
-  geom_line(aes(x = Year, y = Inventory, color = StateName)) +
-  scale_y_continuous(labels = scales::percent) +
-  theme_minimal()
 ```
 
-Column {data-width=650}
+Column {data-width=600}
 -----------------------------------------------------------------------
 
 ### Chart A
 
 ```{r}
-ggplotly(result)
+library(leaflet)
+library(map)
+mapStates = map("state", fill = TRUE, plot = FALSE)
+
+leaflet(data = mapStates) %>% addTiles() %>%
+  addPolygons(fillColor = topo.colors(10, alpha = NULL), stroke = FALSE)
 ```
 
 Column {data-width=350}
@@ -31,12 +33,32 @@ Column {data-width=350}
 ### Chart B
 
 ```{r}
-ggplotly(result)
+inventory_result = ggplot(zillow %>% filter(StateName == "US")) + 
+  geom_bar(aes(x = Date, y = Inventory_yoy), stat = 'identity', fill = 'orange') + 
+  labs(title = 'Inventory drastically reduced since initial lockdown,
+       with recent recovery from pandemic lows') +
+  ylab('YoY Change')+
+  scale_x_date(breaks = scales::pretty_breaks(n = 10)) +
+  scale_y_continuous(labels = scales::percent) + 
+  xlab('')+
+  theme(panel.background = element_rect(fill = "white", colour = "white"))
+
+ggplotly(inventory_result)
 ```
 
 ### Chart C
 
 ```{r}
-ggplotly(result)
+sales_result = ggplot(zillow %>% filter(StateName == "US")) + 
+  geom_bar(aes(x = Date, y = SalesCount_yoy), stat = 'identity', fill = 'dodgerblue') + 
+  labs(title = 'Sales suffered during country-wide lockdowns, 
+       but quickly rebounded') +
+  ylab('YoY Change')+
+  scale_x_date(labels = scales::date_format("%b %y"),breaks = scales::pretty_breaks(n = 10)) +
+  scale_y_continuous(labels = scales::percent) + 
+  xlab('')+
+  theme(panel.background = element_rect(fill = "white", colour = "white"))
+
+ggplotly(sales_result)
 ```
 

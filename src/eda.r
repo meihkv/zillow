@@ -1,40 +1,34 @@
 library(tidyverse)
 library(lubridate)
 library(plotly)
-sales_count = read.csv('./data/Metro_sales_count_now_uc_sfrcondo_month.csv',colClasses = 'character')
 
-sales_count_pivot = sales_count %>% 
-    pivot_longer(col = starts_with('X'),
-                 names_to = 'Date',
-                 values_to = 'SalesCount') %>% 
-  mutate(Date = as.Date(Date, tryFormats = c("X%Y.%m.%d"))) %>% 
-  mutate(SalesCount = as.numeric(SalesCount)) %>% 
-  mutate(Year = floor_date(Date, unit = 'year')) %>% 
-  group_by(StateName, Year) %>% 
+sales_count = read.csv('./data/Metro_sales_count_now_uc_sfrcondo_month.csv',
+                       colClasses = 'character') %>%
+pivot_longer(col = starts_with('X'),
+             names_to = 'Date',
+             values_to = 'SalesCount') %>%
+  mutate(Date = as.Date(Date, tryFormats = c("X%Y.%m.%d")),
+         SalesCount = as.numeric(SalesCount),
+         StateName = if_else(StateName == "", "US", StateName)) %>%
+  group_by(SizeRank, StateName, Date) %>% 
   summarise(SalesCount = sum(SalesCount)) %>% 
-  ungroup() %>% 
-  mutate(StateName = if_else(StateName == '', 'US', StateName)) %>% 
-  pivot_wider(names_from = StateName, values_from = SalesCount)
+  group_by(StateName) %>% 
+  mutate(SalesCount_yoy = round(SalesCount/lag(SalesCount, 12),4)-1) %>% 
+  drop_na()
 
-inventory = read.csv('./data/Metro_invt_fs_uc_sfrcondo_month.csv', 
-                     colClasses = 'character')
-
-inventory_pivot = sales_count %>% 
+inventory = read.csv('./data/Metro_invt_fs_uc_sfrcondo_month.csv',
+                     colClasses = 'character') %>%
   pivot_longer(col = starts_with('X'),
                names_to = 'Date',
-               values_to = 'SalesCount') %>% 
-  mutate(Date = as.Date(Date, tryFormats = c("X%Y.%m.%d"))) %>% 
-  mutate(SalesCount = as.numeric(SalesCount)) %>% 
-  mutate(Year = floor_date(Date, unit = 'year')) %>% 
-  group_by(StateName, Year) %>% 
-  summarise(SalesCount = sum(SalesCount)) %>% 
-  ungroup() %>% 
-  mutate(StateName = if_else(StateName == '', 'US', StateName)) %>% 
-  pivot_wider(names_from = StateName, values_from = SalesCount) %>% 
-  column_to_rownames(., var = "Year")
+               values_to = 'Inventory') %>%
+  mutate(Date = as.Date(Date, tryFormats = c("X%Y.%m.%d")),
+         Inventory = as.numeric(Inventory),
+         StateName = if_else(StateName == "", "US", StateName)) %>%
+  group_by(SizeRank, StateName, Date) %>% 
+  summarise(Inventory = sum(Inventory)) %>% 
+  group_by(StateName) %>% 
+  mutate(Inventory_yoy = round(Inventory/lag(Inventory, 12),4)-1) %>% 
+  drop_na()
 
-relative_change = (inventory_pivot/lag(inventory_pivot)-1) %>% 
-  as_tibble(rownames = "Year") %>% 
-  pivot_longer(col = -Year,names_to = 'StateName', values_to = 'Inventory') %>% 
-  mutate(Year = as.Date(Year),
-         Inventory = round(Inventory, 2))
+zillow = inventory %>% 
+  inner_join(sales_count)
