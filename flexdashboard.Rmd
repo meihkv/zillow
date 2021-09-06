@@ -43,7 +43,7 @@ inventory_result = ggplot(zillow %>% filter(StateName == "US")) +
   xlab('')+
   theme(panel.background = element_rect(fill = "white", colour = "white"))
 
-ggplotly(inventory_result)
+ggplotly(inventory_result) %>% config(displayModeBar = F)
 ```
 
 ### 
@@ -59,6 +59,6 @@ sales_result = ggplot(zillow %>% filter(StateName == "US")) +
   xlab('')+
   theme(panel.background = element_rect(fill = "white", colour = "white"))
 
-ggplotly(sales_result)
+ggplotly(sales_result) %>% config(displayModeBar = F)
 ```
 
