@@ -1,0 +1,32 @@
+---
+title: "Storyboard Commentary"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+---
+
+```{r setup, include=FALSE,}
+# rmarkdown::render(input = 'flexdashboard.Rmd', output_format = 'all',output_dir = './doc', output_file = 'index.html')
+library(flexdashboard)
+source('./src/eda.r')
+```
+
+### Frame 1
+
+```{r}
+ggplotly(result)
+```
+
+*** 
+
+Some commentary about Frame 1.
+
+### Frame 2 {data-commentary-width=400}
+
+```{r}
+ggplotly(result)
+```
+
+*** 
+
+Some commentary about Frame 2.
