@@ -51,8 +51,8 @@ ggplotly(inventory_result) %>% config(displayModeBar = F)
 ```{r}
 sales_result = ggplot(zillow %>% filter(StateName == "US")) + 
   geom_bar(aes(x = Date, y = SalesCount_yoy), stat = 'identity', fill = 'dodgerblue') + 
-  labs(title = 'Sales suffered during country-wide lockdowns, 
-       but quickly rebounded') +
+  labs(title = 'Sales suffered during nation-wide lockdowns 
+       but quickly rebounded when lifted') +
   ylab('YoY Change')+
   scale_x_date(labels = scales::date_format("%b %y"),breaks = scales::pretty_breaks(n = 10)) +
   scale_y_continuous(labels = scales::percent) + 
